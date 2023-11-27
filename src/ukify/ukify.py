@@ -927,7 +927,7 @@ def generate_key_cert_pair(
     return key_pem, cert_pem
 
 
-def generate_priv_pub_key_pair(keylength : int = 2048) -> tuple[bytes]:
+def generate_priv_pub_key_pair(keylength: int = 2048) -> tuple[bytes]:
     from cryptography.hazmat.primitives import serialization
     from cryptography.hazmat.primitives.asymmetric import rsa
 
@@ -994,8 +994,8 @@ def inspect_section(opts, section):
     digest = sha256(data).hexdigest()
 
     struct = {
-        'size' : size,
-        'sha256' : digest,
+        'size': size,
+        'sha256': digest,
     }
 
     if ttype == 'text':
@@ -1024,7 +1024,7 @@ def inspect_sections(opts):
     for file in opts.files:
         pe = pefile.PE(file, fast_load=True)
         gen = (inspect_section(opts, section) for section in pe.sections)
-        descs = {key:val for (key, val) in gen if val}
+        descs = {key: val for (key, val) in gen if val}
         if opts.json != 'off':
             json.dump(descs, sys.stdout, indent=indent)
 
@@ -1152,7 +1152,7 @@ class ConfigItem:
         elif self.type:
             conv = self.type
         else:
-            conv = lambda s:s
+            conv = lambda s: s
 
         # This is a bit ugly, but --initrd is the only option which is specified
         # with multiple args on the command line and a space-separated list in the
@@ -1641,7 +1641,7 @@ def finalize_options(opts):
     f = Section.parse_output if opts.verb == 'inspect' else Section.parse_input
     opts.sections = [f(s) for s in opts.sections]
     # A convenience dictionary to make it easy to look up sections
-    opts.sections_by_name = {s.name:s for s in opts.sections}
+    opts.sections_by_name = {s.name: s for s in opts.sections}
 
     if opts.summary:
         # TODO: replace pprint() with some fancy formatting.
