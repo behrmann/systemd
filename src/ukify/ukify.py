@@ -70,6 +70,7 @@ EFI_ARCHES: list[str] = sum(EFI_ARCH_MAP.values(), [])
 DEFAULT_CONFIG_DIRS = ['/run/systemd', '/etc/systemd', '/usr/local/lib/systemd', '/usr/lib/systemd']
 DEFAULT_CONFIG_FILE = 'ukify.conf'
 
+
 class Style:
     bold = "\033[0;1;39m" if sys.stderr.isatty() else ""
     gray = "\033[0;38;5;245m" if sys.stderr.isatty() else ""
@@ -254,6 +255,7 @@ class Uname:
                 print(str(e))
         return None
 
+
 DEFAULT_SECTIONS_TO_SHOW = {
         '.linux'    : 'binary',
         '.initrd'   : 'binary',
@@ -267,6 +269,7 @@ DEFAULT_SECTIONS_TO_SHOW = {
         '.sbat'     : 'text',
         '.sbom'     : 'binary',
 }
+
 
 @dataclasses.dataclass
 class Section:
@@ -354,6 +357,7 @@ KNOWN_PHASES = (
     'final',
 )
 
+
 def parse_phase_paths(s):
     # Split on commas or whitespace here. Commas might be hard to parse visually.
     paths = re.split(r',|\s+', s)
@@ -421,6 +425,7 @@ def find_tool(name, fallback=None, opts=None):
         print(f"Tool {name} not installed!")
 
     return fallback
+
 
 def combine_signatures(pcrsigs):
     combined = collections.defaultdict(list)
@@ -639,6 +644,7 @@ def pe_add_sections(uki: UKI, output: str):
 
     pe.write(output)
 
+
 def merge_sbat(input_pe: [pathlib.Path], input_text: [str]) -> str:
     sbat = []
 
@@ -670,12 +676,15 @@ def merge_sbat(input_pe: [pathlib.Path], input_text: [str]) -> str:
 
     return 'sbat,1,SBAT Version,sbat,1,https://github.com/rhboot/shim/blob/main/SBAT.md\n' + '\n'.join(sbat) + "\n\x00"
 
+
 def signer_sign(cmd):
     print('+', shell_join(cmd))
     subprocess.check_call(cmd)
 
+
 def find_sbsign(opts=None):
     return find_tool('sbsign', opts=opts)
+
 
 def sbsign_sign(sbsign_tool, input_f, output_f, opts=None):
     sign_invocation = [
@@ -689,8 +698,10 @@ def sbsign_sign(sbsign_tool, input_f, output_f, opts=None):
         sign_invocation += ['--engine', opts.signing_engine]
     signer_sign(sign_invocation)
 
+
 def find_pesign(opts=None):
     return find_tool('pesign', opts=opts)
+
 
 def pesign_sign(pesign_tool, input_f, output_f, opts=None):
     sign_invocation = [
@@ -702,11 +713,13 @@ def pesign_sign(pesign_tool, input_f, output_f, opts=None):
     ]
     signer_sign(sign_invocation)
 
+
 SBVERIFY = {
     'name': 'sbverify',
     'option': '--list',
     'output': 'No signature table present',
 }
+
 
 PESIGCHECK = {
     'name': 'pesign',
@@ -714,6 +727,7 @@ PESIGCHECK = {
     'output': 'No signatures found.',
     'flags': '-S'
 }
+
 
 def verify(tool, opts):
     verify_tool = find_tool(tool['name'], opts=opts)
@@ -729,6 +743,7 @@ def verify(tool, opts):
     info = subprocess.check_output(cmd, text=True)
 
     return tool['output'] in info
+
 
 def make_uki(opts):
     # kernel payload signing
@@ -865,7 +880,6 @@ def generate_key_cert_pair(
         valid_days: int,
         keylength: int = 2048,
 ) -> tuple[bytes]:
-
     from cryptography import x509
     from cryptography.hazmat.primitives import serialization, hashes
     from cryptography.hazmat.primitives.asymmetric import rsa
