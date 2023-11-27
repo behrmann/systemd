@@ -257,17 +257,17 @@ class Uname:
 
 
 DEFAULT_SECTIONS_TO_SHOW = {
-        '.linux'    : 'binary',
-        '.initrd'   : 'binary',
-        '.splash'   : 'binary',
-        '.dtb'      : 'binary',
-        '.cmdline'  : 'text',
-        '.osrel'    : 'text',
-        '.uname'    : 'text',
-        '.pcrpkey'  : 'text',
-        '.pcrsig'   : 'text',
-        '.sbat'     : 'text',
-        '.sbom'     : 'binary',
+    ".linux": "binary",
+    ".initrd": "binary",
+    ".splash": "binary",
+    ".dtb": "binary",
+    ".cmdline": "text",
+    ".osrel": "text",
+    ".uname": "text",
+    ".pcrpkey": "text",
+    ".pcrsig": "text",
+    ".sbat": "text",
+    ".sbom": "binary",
 }
 
 
@@ -876,9 +876,9 @@ def temporary_umask(mask: int):
 
 
 def generate_key_cert_pair(
-        common_name: str,
-        valid_days: int,
-        keylength: int = 2048,
+    common_name: str,
+    valid_days: int,
+    keylength: int = 2048,
 ) -> tuple[bytes]:
     from cryptography import x509
     from cryptography.hazmat.primitives import serialization, hashes
@@ -1033,10 +1033,10 @@ def inspect_sections(opts):
 class ConfigItem:
     @staticmethod
     def config_list_prepend(
-            namespace: argparse.Namespace,
-            group: Optional[str],
-            dest: str,
-            value: Any,
+        namespace: argparse.Namespace,
+        group: Optional[str],
+        dest: str,
+        value: Any,
     ) -> None:
         "Prepend value to namespace.<dest>"
 
@@ -1049,10 +1049,10 @@ class ConfigItem:
 
     @staticmethod
     def config_set_if_unset(
-            namespace: argparse.Namespace,
-            group: Optional[str],
-            dest: str,
-            value: Any,
+        namespace: argparse.Namespace,
+        group: Optional[str],
+        dest: str,
+        value: Any,
     ) -> None:
         "Set namespace.<dest> to value only if it was None"
 
@@ -1063,10 +1063,10 @@ class ConfigItem:
 
     @staticmethod
     def config_set(
-            namespace: argparse.Namespace,
-            group: Optional[str],
-            dest: str,
-            value: Any,
+        namespace: argparse.Namespace,
+        group: Optional[str],
+        dest: str,
+        value: Any,
     ) -> None:
         "Set namespace.<dest> to value only if it was None"
 
@@ -1076,10 +1076,10 @@ class ConfigItem:
 
     @staticmethod
     def config_set_group(
-            namespace: argparse.Namespace,
-            group: Optional[str],
-            dest: str,
-            value: Any,
+        namespace: argparse.Namespace,
+        group: Optional[str],
+        dest: str,
+        value: Any,
     ) -> None:
         "Set namespace.<dest>[idx] to value, with idx derived from group"
 
