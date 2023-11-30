@@ -1030,6 +1030,71 @@ def inspect_sections(opts):
 
 
 @dataclasses.dataclass(frozen=True)
+class Cpu:
+    vendor: str
+    family: int
+    model: int
+    stepping: int
+
+    @classmethod
+    def from_cpu_info_entry(cls, entry: str) -> "Cpu":
+        vendor_id = cpu_family = model = stepping = None
+        for line in entry.splitlines():
+            key, _, value = line.partition(":")
+            key = key.strip()
+            value = value.strip()
+
+            if key == "vendor_id":
+                if value == "AuthenticAMD":
+                    vendor_id = "AMD"
+                elif value == "GenuineIntel":
+                    vendor_id = "Intel"
+            elif key == "cpu family":
+                cpu_family = int(value)
+            elif key == "model":
+                model = int(value)
+            elif key == "stepping":
+                stepping = int(value)
+
+        if vendor_id is None or cpu_family is None or model is None or stepping is None:
+            raise ValueError(
+                "Unable to parse CPU info: " +
+                f"vendor_id={vendor_id}, cpu_family={cpu_family}, model={model}, stepping={stepping}\n" +
+                entry
+            )
+        return cls(vendor_id, cpu_family, model, stepping)
+
+    def _ucode_file_candidates(self) -> list[pathlib.Path]:
+        root = pathlib.Path("/usr/lib/firmware") / f"{self.vendor.lower()}-ucode"
+        if self.vendor == "AMD":
+            if self.family > 21:
+                return [root / f"microcode_amd_fam{family:x}h.bin"]
+            else:
+                return [root / "microcode_amd.bin"]
+        elif self.vendor == "Intel":
+            [
+                root / f"{self.family:02x}-{self.model:02x}-{self.stepping:02x}",
+                # Some microcode files only exist with a .initramfs suffix
+                root / f"{self.family:02x}-{self.model:02x}-{self.stepping:02x}.initramfs",
+            ]
+        return []
+
+    def ucode_file(self) -> Optional[pathlib.Path]:
+        for ucode in self._ucode_file_candidates():
+            if ucode.exists():
+                return ucode
+        return None
+
+
+def identify_cpus() -> list[Cpu]:
+    return [
+        Cpu.from_cpu_info_entry(e)
+        for e in pathlib.Path("/proc/cpuinfo").read_text().split("\n\n")
+        if e
+    ]
+
+
+@dataclasses.dataclass(frozen=True)
 class ConfigItem:
     @staticmethod
     def config_list_prepend(
